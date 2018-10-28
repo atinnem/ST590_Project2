@@ -24,7 +24,8 @@ ui <- dashboardPage(skin="blue",
                             h4("The data in this app is from an echocardiography lab.  To learn more about echocardiography click here. "),
                      h4("Staff members are allotted a certain amount of time to complete a study and each quarter this data is reviewed to analyze trends, tweak scheduling, and potentially justify additional personnel.  It also serves to identify both efficient and less than efficient staff members."),
                      h4("The time frames analyzed are “Scan Time” and “Report Time”."),
-                     h4("“Scan Time” is the amount of time it took to perform an exam.  It covers the time period from when a patient is taken into an exam room until the analysis is completed (this is usually done after a patient has left).   The period of time after an exam is completed until a report is printed for review by a doctor is “Report Time”.") 
+                     h4("“Scan Time” is the amount of time it took to perform an exam.  It covers the time period from when a patient is taken into an exam room until the analysis is completed (this is usually done after a patient has left).   The period of time after an exam is completed until a report is printed for review by a doctor is “Report Time”."),
+                     h4(a("click here", href="https://www.mayoclinic.org/tests-procedures/echocardiogram/about/pac-20393856"))
                                )),
           column(6,
                  h1("Terms you will see within the app"),
