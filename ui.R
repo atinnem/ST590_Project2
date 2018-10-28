@@ -32,7 +32,11 @@ ui <- dashboardPage(skin="blue",
 h4("Inpatient - Patients admitted to the hospital"),
 h4("Outpatient - Patients seen in an outpatient clinic"),
 h4("Portable - inpatients who were unable to travel to the department"),
-h4("Contrast - Studies that utilized an image enhancing agent.  These studies require a nurse as well as a sonographer"))))
+h4("Contrast - Studies that utilized an image enhancing agent.  These studies require a nurse as well as a sonographer"),
+h4("Z-score - The average times per sonograhper were standardized using the formula:"),
+withMathJax(),
+h4('$$\\frac{var-mean(var)}{sd}$$')
+)))
       ),
       tabItem(tabName = "app",
               fluidRow(
