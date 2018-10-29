@@ -5,6 +5,7 @@
 library(shiny)
 library(shinydashboard)
 library(tidyverse)
+library(plotly)
 
 df.csv<-read_csv("procedure_times.csv")
 
@@ -51,7 +52,7 @@ h4('$$\\frac{var-mean(var)}{sd}$$')
                                   checkboxInput("contrastscan", "Contrast"),
                                   conditionalPanel(condition = "input.class == 'Inpatient'", 
                                          checkboxInput("portablescan", "Portable")),
-                                  plotOutput("medScanTimes", click = "plot_click"), 
+                                  plotlyOutput("medScanTimes"), 
                                   verbatimTextOutput("info"), downloadButton("downloadplot1", "Download")
                                   #conditionalPanel(condition="input.class==Inpatient && input.portablereport !== NULL", textInput("Please uncheck 'portable' on the report tab before proceeding"))
                                   ),
