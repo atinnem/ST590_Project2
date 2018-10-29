@@ -53,7 +53,8 @@ h4('$$\\frac{var-mean(var)}{sd}$$')
                                   conditionalPanel(condition = "input.class == 'Inpatient'", 
                                          checkboxInput("portablescan", "Portable")),
                                   plotlyOutput("medScanTimes"), 
-                                  verbatimTextOutput("info"), downloadButton("downloadplot1", "Download")
+                                  verbatimTextOutput("click"), 
+                                  downloadButton("downloadplot1", "Download")
                                   #conditionalPanel(condition="input.class==Inpatient && input.portablereport !== NULL", textInput("Please uncheck 'portable' on the report tab before proceeding"))
                                   ),
                          tabPanel("Report Time", 
@@ -61,8 +62,8 @@ h4('$$\\frac{var-mean(var)}{sd}$$')
                                   conditionalPanel(
                                     condition = "input.class == 'Inpatient'",
                                     checkboxInput("portablereport", "Portable")),
-                                  plotOutput("medRepTimes", 
-                                     click = "plot_click"), 
+                                  plotlyOutput("medRepTimes", 
+                                     ), 
                                   verbatimTextOutput("info2"), downloadButton("downloadplot2", "Download")),
                          tabPanel("Dataset",
                                   "dataset goes here", dataTableOutput("table"),downloadButton("downloadData", "Download"))

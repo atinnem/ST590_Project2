@@ -9,18 +9,21 @@ library(plotly)
 
 
 df.csv<-read_csv("procedure_times.csv")
+
 #changing name for ease of interpretation by others
 colnames(df.csv)[colnames(df.csv)=="log_resptech"]<-"staff_id"
 
+
 shinyServer(function(input, output, session) {
+  
   #Overall scan time by patient class
   getscanDataall <- reactive({
-    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medscantime=median(Scan_Time))
+    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medscantime=median(Scan_Time)) %>% mutate(z_score = scale(medscantime))
   })
   
   #overall report time by patient class
   getReportDataall <- reactive({
-    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time))
+    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))
   })
   
   #overall data set filtered by Class
@@ -30,22 +33,22 @@ shinyServer(function(input, output, session) {
   
   #scan time by class and contrast
   getScanContrast<- reactive({
-    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTcontrast=median(Scan_Time))
+    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTcontrast=median(Scan_Time))  %>% mutate(z_score = scale(medSTcontrast))
   })
-  
+
   #scan time by class and portable
   getScanPortable<- reactive({
-    portableScan<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTport=median(Scan_Time))
+    portableScan<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTport=median(Scan_Time)) %>% mutate(z_score = scale(medSTport))
   })
   
   #scan time by clas, portable, contrast
   getScanboth<- reactive({
-    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class, Portable =="Portable") %>% group_by(staff_id) %>% summarise(medSTboth=median(Scan_Time))
+    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class, Portable =="Portable") %>% group_by(staff_id) %>% summarise(medSTboth=median(Scan_Time))%>% mutate(z_score = scale(medSTboth))
   })
   
   #report time by class and portable
   getReportPort<- reactive({
-    reportPort<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medRTport=median(Report_time))
+    reportPort<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medRTport=median(Report_time))%>% mutate(z_score = scale(medRTport))
   })
   
   #create plotting function for Scan Time
@@ -57,24 +60,24 @@ shinyServer(function(input, output, session) {
     
     
     if(input$contrastscan & input$portablescan){
-      g<-ggplot(scanboth, aes(x=staff_id, y = medSTboth)) + geom_bar(stat = "identity") 
-     
+      g<-ggplot(scanboth, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
+      
       #+ geom_hline(aes(yintercept = median(medSTboth)), color = "red")
     } else if(input$contrastscan){
-      g<-ggplot(scanContrast, aes(x=staff_id, y = medSTcontrast)) + geom_bar(stat = "identity") 
+      g<-ggplot(scanContrast, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
       
       #geom_hline(aes(yintercept = median(medSTcontrast)), color = "red")
     } else if(input$portablescan){
-      g<-ggplot(scanportable, aes(x=staff_id, y = medSTport)) + geom_bar(stat = "identity") 
+      g<-ggplot(scanportable, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
       
       #geom_hline(aes(yintercept = median(medSTport)), color = "red")
     } else {
-      g<-ggplot(overall, aes(x=staff_id, y = medscantime))+ geom_bar(stat = "identity") 
+      g<-ggplot(overall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") 
       
-                #+ geom_hline(aes(yintercept = median(medscantime)), color = "red") + scale_y_continuous(limits = c(0,125), breaks = seq(0,125, length.out = 6), labels = c("00:00:00", "00:20:00", "00:40:00", "01:00:00", "01:20:00", "01:40:00"))
+      #+ geom_hline(aes(yintercept = median(medscantime)), color = "red") + scale_y_continuous(limits = c(0,125), breaks = seq(0,125, length.out = 6), labels = c("00:00:00", "00:20:00", "00:40:00", "01:00:00", "01:20:00", "01:40:00"))
     }
     ggplotly(g)
-    })
+  })
   
   #Scan Times
   output$medScanTimes <- renderPlotly({
@@ -91,16 +94,20 @@ shinyServer(function(input, output, session) {
 
     
     if(input$portablereport){
-      g<-ggplot(report_port, aes(x=staff_id, y = medRTport))
-      g + geom_bar(stat = "identity") + geom_hline(aes(yintercept = median(medRTport)), color = "red")
+      g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") 
+      #+ geom_hline(aes(yintercept = median(medRTport)), color = "red")
     } else {
-      g<-ggplot(repoverall, aes(x=staff_id, y = medreptime))
-      g + geom_bar(stat = "identity") + geom_hline(aes(yintercept = median(medreptime)), color = "red")
+      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") 
+      #+ geom_hline(aes(yintercept = median(medreptime)), color = "red")
     }
+    ggplotly(g)
   })
     
   
-  
+  output$click<-renderPrint({
+   event_data("plotly_click")
+   
+  })
   # Scan Time click table 
   output$info<-renderPrint({
     scanContrast<-getScanContrast()
