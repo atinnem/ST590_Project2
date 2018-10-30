@@ -85,12 +85,17 @@ shinyServer(function(input, output, session) {
    scanportable<-getScanPortable()
    
    if(input$contrastscan & input$portablescan){
-      paste( "blah", median(ugh$Scan_Time), "blah", sep = "")
+     ugh1<- ugh %>% filter(Contrast == "Contrast", Portable =="Portable")
+      paste( "The median Scan Time for the lab is: ", median(ugh1$Scan_Time), " (format is hh:mm:ss)", sep = "")
    } else if(input$portablescan){
      ugh2<-ugh %>% filter(Portable =="Portable")
-     paste("blah", median(ugh2$Scan_Time))
-    } else {
-     paste("ugh")
+     paste("The median Scan Time for the lab is: ", median(ugh2$Scan_Time), " (format is hh:mm:ss)", sep = "")
+   }  else if(input$contrastscan){
+      ugh3 <- ugh %>% filter(Contrast == "Contrast")
+     paste("The median Scan Time for the lab is ", median(ugh3$Scan_Time), " (format is hh:mm:ss)", sep = "")
+    }
+       else {
+     paste("The median Scan Time for the lab is: ", median(ugh$Scan_Time), " (format is hh:mm:ss)", sep = "")
    }
     })
   
