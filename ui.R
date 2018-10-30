@@ -9,7 +9,7 @@ library(plotly)
 
 df.csv<-read_csv("procedure_times.csv")
 
-ui <- dashboardPage(skin="blue",
+ui <- dashboardPage(skin="purple",
                     header<-dashboardHeader(title = "Procedure Times"),
                     sidebar<-dashboardSidebar(
                       sidebarMenu(menuItem("about", tabName = "about", icon = icon("archive")),
@@ -21,24 +21,24 @@ ui <- dashboardPage(skin="blue",
                                 fluidRow(
                                   column(6,
                                          h1("What does this app do?"),
-                                         box(background = "blue", width = 12,
+                                         box(background = "purple", width = 12,
                                              h4("The data in this app is from an echocardiography lab.  To learn more about echocardiography", a("click here", href="https://www.mayoclinic.org/tests-procedures/echocardiogram/about/pac-20393856")),
-                                             h4("In this department Staff members are allotted one hour to complete a study and to enter a preliminary report."),
+                                             h4("In this department staff members are allotted one hour to complete a study and to enter a preliminary report."),
                                              h4("Each quarter this data is reviewed to analyze trends, tweak scheduling, and potentially justify additional personnel.  It also serves to identify both efficient and less than efficient staff members."),
-                                             h4("The time frames analyzed are “Scan Time” and “Report Time”."),
-                                             h4("strong(Scan Time) is the amount of time it took to perform an exam.  It covers the time period from when a patient is taken into an exam room until all analysis is completed (this is usually done after a patient has left)."),
-                                             h4("“Report Time” is the period of time after an exam is completed until a preliminary report is ready for review by a doctor.")
+                                             h4(HTML("The time frames analyzed are <em>Scan Time</em> and <em>Report Time</em>.")),
+                                             h4(HTML("<em>Scan Time</em> refers to the amount of time it took to perform an exam.  It covers the time period from when a patient is taken into an exam room until all analysis is completed (this is usually done after a patient has left).")),
+                                             h4(HTML("<em>Report Time</em> is the period of time after an exam is completed until a preliminary report is ready for review by a doctor."))
                                                                                       )),
                                   column(6,
                                          h1("Terms you will see within the app"),
-                                         box(background = "blue", width = 12, 
+                                         box(background = "purple", width = 12, 
                                              h4("Inpatient - Patients admitted to the hospital"),
                                              h4("Outpatient - Patients seen in an outpatient clinic"),
                                              h4("Portable - inpatients who were unable to travel to the department"),
                                              h4("Contrast - Studies that utilized an image enhancing agent.  These studies require a nurse as well as a sonographer"),
                                              h4("Z-score - The average times per sonograhper were standardized using the formula:"),
                                              withMathJax(),
-                                             h4('$$\\frac{var-mean(var)}{sd}$$')
+                                             h4('$$\\frac{Variable-mean(Variable)}{sd(variable)}$$')
                                          )))
                         ),
                         tabItem(tabName = "app",
