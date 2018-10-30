@@ -60,21 +60,17 @@ shinyServer(function(input, output, session) {
     
     
     if(input$contrastscan & input$portablescan){
-      g<-ggplot(scanboth, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
-      
-      #+ geom_hline(aes(yintercept = median(medSTboth)), color = "red")
+      g<-ggplot(scanboth, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
+    
     } else if(input$contrastscan){
-      g<-ggplot(scanContrast, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
+      g<-ggplot(scanContrast, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
       
-      #geom_hline(aes(yintercept = median(medSTcontrast)), color = "red")
     } else if(input$portablescan){
-      g<-ggplot(scanportable, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") 
+      g<-ggplot(scanportable, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
       
-      #geom_hline(aes(yintercept = median(medSTport)), color = "red")
     } else {
-      g<-ggplot(overall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") 
+      g<-ggplot(overall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
       
-      #+ geom_hline(aes(yintercept = median(medscantime)), color = "red") + scale_y_continuous(limits = c(0,125), breaks = seq(0,125, length.out = 6), labels = c("00:00:00", "00:20:00", "00:40:00", "01:00:00", "01:20:00", "01:40:00"))
     }
     ggplotly(g)
   })
@@ -85,13 +81,13 @@ shinyServer(function(input, output, session) {
    scanportable<-getScanPortable()
    
    if(input$contrastscan & input$portablescan){
-     st_text1<- ugh %>% filter(Contrast == "Contrast", Portable =="Portable")
+     st_text1<- st_text %>% filter(Contrast == "Contrast", Portable =="Portable")
       paste( "The median Scan Time for the lab is: ", median(st_text1$Scan_Time), " (format is hh:mm:ss)", sep = "")
    } else if(input$portablescan){
      st_text2<-st_text %>% filter(Portable =="Portable")
      paste("The median Scan Time for the lab is: ", median(st_text2$Scan_Time), " (format is hh:mm:ss)", sep = "")
    }  else if(input$contrastscan){
-      st_text3 <- ugh %>% filter(Contrast == "Contrast")
+      st_text3 <- st_text %>% filter(Contrast == "Contrast")
      paste("The median Scan Time for the lab is ", median(st_text3$Scan_Time), " (format is hh:mm:ss)", sep = "")
     }
        else {
@@ -115,10 +111,10 @@ shinyServer(function(input, output, session) {
     
     
     if(input$portablereport){
-      g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") 
+      g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Report Times by Staff Member")
      
     } else {
-      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") 
+      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Report Times by Staff Member")
      
     }
     ggplotly(g)
