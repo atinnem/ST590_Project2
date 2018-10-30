@@ -35,7 +35,7 @@ shinyServer(function(input, output, session) {
   getScanContrast<- reactive({
     contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTcontrast=median(Scan_Time))  %>% mutate(z_score = scale(medSTcontrast))
   })
-
+  
   #scan time by class and portable
   getScanPortable<- reactive({
     portableScan<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTport=median(Scan_Time)) %>% mutate(z_score = scale(medSTport))
@@ -83,15 +83,15 @@ shinyServer(function(input, output, session) {
   output$medScanTimes <- renderPlotly({
     scanTimeinput()
     
-    })
-    
+  })
+  
   
   #Report Times
   output$medRepTimes <- renderPlotly({
     #get filtered data
     report_port<-getReportPort()
     repoverall<-getReportDataall()
-
+    
     
     if(input$portablereport){
       g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") 
@@ -102,74 +102,41 @@ shinyServer(function(input, output, session) {
     }
     ggplotly(g)
   })
+  # report Time click table 
+  output$info2<-renderPrint({
+    event_data("plotly_click")
     
-  
-  output$click<-renderPrint({
-   event_data("plotly_click")
-   
   })
   # Scan Time click table 
-  output$info<-renderPrint({
-    scanContrast<-getScanContrast()
-    scanboth<-getScanboth()
-    overall<-getscanDataall()
-    scanportable<-getScanPortable()
+  output$click<-renderPrint({
+    event_data("plotly_click")
     
-    
-    if(input$contrastscan & input$portablescan){
-      nearPoints(scanboth, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
-    } else if(input$contrastscan){
-      nearPoints(scanContrast, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
-          } else if(input$portablescan){
-      nearPoints(scanportable, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
-      
-    } else {
-      nearPoints(overall, input$plot_click,addDist = TRUE)
-    }
-    
-  
   })
   
-  #Report time click table
-  output$info2<-renderPrint({
-    
-    #get filtered data
-    report_port<-getReportPort()
-    repoverall<-getReportDataall()
-    
-    if(input$portablereport){
-      nearPoints(report_port, input$plot_click,addDist = TRUE)
-    } else {
-      nearPoints(repoverall, input$plot_click,addDist = TRUE)
-    }
-  })
-  
+
+
   
   #download scan time plot
   output$downloadplot1<-downloadHandler(
     
     filename = function(){
-    paste("ScanTime", input$class, ".png", sep = "")}, 
-      content = function(file){
-   ggsave(file, scanTimeinput())
-  
-  })
+      paste("ScanTime", input$class, ".png", sep = "")}, 
+    content = function(file){
+      ggsave(file, scanTimeinput())
+      
+    })
   
   #data table download
   output$downloadData<-downloadHandler(filename = "procedure_times.csv", content = function(file){
     write.csv(getallData(), file)
   })
- 
   
   
-
+  
+  
   
   #dataset
   output$table <-renderDataTable({
     getallData()
   })
- })
-    
-
-  
-
+})
