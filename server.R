@@ -81,20 +81,17 @@ shinyServer(function(input, output, session) {
   
   #Text to display lab medians for selected subgroups
   output$attempt<-renderText({
-    scanContrast<-getScanContrast()
-    scanboth<-getScanboth()
-    overall<-getscanDataall()
-    scanportable<-getScanPortable()
-    
-    if(input$contrastscan & input$portablescan){
-    paste0("The median scan time for the lab is ", median(scanboth$Scan_Time), " (in hh:mm:ss format)")
-  } else if(input$contrastscan){
-    paste0("The median scan time for the lab is ", median(scanContrast$Scan_Time), " (in hh:mm:ss format)")
-    }  else if(input$portablescan){
-      paste0("The median scan time for the lab is ", median(scanportable$Scan_Time), " (in hh:mm:ss format)")
-    }else {
-      paste0("The median scan time for the lab is ", median(overall$Scan_Time), " (in hh:mm:ss format)")
-    }
+   ugh<-getallData()
+   scanportable<-getScanPortable()
+   
+   if(input$contrastscan & input$portablescan){
+      paste( "blah", median(ugh$Scan_Time), "blah", sep = "")
+   } else if(input$portablescan){
+     ugh2<-ugh %>% filter(Portable =="Portable")
+     paste("blah", median(ugh2$Scan_Time))
+    } else {
+     paste("ugh")
+   }
     })
   
   
