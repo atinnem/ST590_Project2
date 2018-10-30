@@ -53,10 +53,10 @@ ui <- dashboardPage(skin="blue",
                                                     conditionalPanel(condition = "input.class == 'Inpatient'", 
                                                                      checkboxInput("portablescan", "Portable")),
                                                     textOutput("attempt"),
+                                                    conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies")),
                                                     plotlyOutput("medScanTimes"), 
                                                     verbatimTextOutput("click"), 
                                                     downloadButton("downloadplot1", "Download")
-                                                    #conditionalPanel(condition="input.class==Inpatient && input.portablereport !== NULL", textInput("Please uncheck 'portable' on the report tab before proceeding"))
                                            ),
                                            tabPanel("Report Time", 
                                                     "Amount of Time to Enter a Report",
