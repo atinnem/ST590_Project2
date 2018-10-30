@@ -79,14 +79,33 @@ shinyServer(function(input, output, session) {
     ggplotly(g)
   })
   
-  #Scan Times
+  #Text to display lab medians for selected subgroups
+  output$attempt<-renderText({
+    scanContrast<-getScanContrast()
+    scanboth<-getScanboth()
+    overall<-getscanDataall()
+    scanportable<-getScanPortable()
+    
+    if(input$contrastscan & input$portablescan){
+    paste0("The median scan time for the lab is ", median(scanboth$Scan_Time), " (in hh:mm:ss format)")
+  } else if(input$contrastscan){
+    paste0("The median scan time for the lab is ", median(scanContrast$Scan_Time), " (in hh:mm:ss format)")
+    }  else if(input$portablescan){
+      paste0("The median scan time for the lab is ", median(scanportable$Scan_Time), " (in hh:mm:ss format)")
+    }else {
+      paste0("The median scan time for the lab is ", median(overall$Scan_Time), " (in hh:mm:ss format)")
+    }
+    })
+  
+  
+  #plot z score of Scan Times
   output$medScanTimes <- renderPlotly({
     scanTimeinput()
     
   })
   
   
-  #Report Times
+  # plot z score of Report Times
   output$medRepTimes <- renderPlotly({
     #get filtered data
     report_port<-getReportPort()
@@ -128,15 +147,15 @@ shinyServer(function(input, output, session) {
   
   #data table download
   output$downloadData<-downloadHandler(filename = "procedure_times.csv", content = function(file){
-    write.csv(getallData(), file)
+    write.csv(df.csv, file)
   })
-  
-  
-  
+
   
   
   #dataset
-  output$table <-renderDataTable({
-    getallData()
+  output$table <-DT::renderDataTable({
+    datatabe<-getallData()
+    new<-datatabe %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
+    DT::datatable(new, options = list(pageLength = 15))
   })
 })

@@ -52,6 +52,7 @@ ui <- dashboardPage(skin="blue",
                                                     checkboxInput("contrastscan", "Contrast"),
                                                     conditionalPanel(condition = "input.class == 'Inpatient'", 
                                                                      checkboxInput("portablescan", "Portable")),
+                                                    textOutput("attempt"),
                                                     plotlyOutput("medScanTimes"), 
                                                     verbatimTextOutput("click"), 
                                                     downloadButton("downloadplot1", "Download")
@@ -66,7 +67,9 @@ ui <- dashboardPage(skin="blue",
                                                     verbatimTextOutput("info2"),
                                                     downloadButton("downloadplot2", "Download")),
                                            tabPanel("Dataset",
-                                                    "dataset goes here", dataTableOutput("table"),downloadButton("downloadData", "Download"))
+                                                    "A condensed sample of the dataset is shown here.  To download the complete dataset please click the download button at the bottom of the page", 
+                                                    DT::dataTableOutput("table"),
+                                                    downloadButton("downloadData", "Download"))
                                          )
                                   ))
                         )
