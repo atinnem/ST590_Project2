@@ -39,14 +39,21 @@ ui <- dashboardPage(skin="purple",
                                              h4("Z-score - The average times per sonograhper were standardized using the formula:"),
                                              withMathJax(),
                                              h4('$$\\frac{Variable-mean(Variable)}{sd(variable)}$$')
-                                         )))
+                                         ))),
+                              fluidRow(
+                                column(12,
+                                       h1("Why standardized scores?"),
+                                       box(background = "purple", width = 24,
+                                           h4("Displaying standardized scores proved to be invaluable in communicating the meaning of the analysis to managers and colleagues with no statistical background."),
+                                           h4("With one glance you can easily appreciate staff who are outperforming their coworkers.  Staff were also able to easily see how they compared to one another. This level of intuitive understanding was lacking when median times were displayed. ")))
+                              ) 
                         ),
                         tabItem(tabName = "app",
                                 fluidRow(
                                   column(3,
-                                         box(width = 12, title = "Select subset of patients",
+                                         box(width = 12, title = "Please select a subset of patients for analysis",
                                              selectizeInput("class", "Class", selected = "Outpatient", choices = levels(as.factor(df.csv$Class))))),
-                                  column(6,
+                                  column(9,
                                          tabBox(
                                            id = "tabset1", height = "500px", width = "250px",
                                            tabPanel("Scan Time", 
