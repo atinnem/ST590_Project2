@@ -79,23 +79,23 @@ shinyServer(function(input, output, session) {
     ggplotly(g)
   })
   
-  #Text to display lab medians for selected subgroups
+  #Text to display lab medians of Scan Time for selected subgroups
   output$attempt<-renderText({
-   ugh<-getallData()
+   st_text<-getallData()
    scanportable<-getScanPortable()
    
    if(input$contrastscan & input$portablescan){
-     ugh1<- ugh %>% filter(Contrast == "Contrast", Portable =="Portable")
-      paste( "The median Scan Time for the lab is: ", median(ugh1$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     st_text1<- ugh %>% filter(Contrast == "Contrast", Portable =="Portable")
+      paste( "The median Scan Time for the lab is: ", median(st_text1$Scan_Time), " (format is hh:mm:ss)", sep = "")
    } else if(input$portablescan){
-     ugh2<-ugh %>% filter(Portable =="Portable")
-     paste("The median Scan Time for the lab is: ", median(ugh2$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     st_text2<-st_text %>% filter(Portable =="Portable")
+     paste("The median Scan Time for the lab is: ", median(st_text2$Scan_Time), " (format is hh:mm:ss)", sep = "")
    }  else if(input$contrastscan){
-      ugh3 <- ugh %>% filter(Contrast == "Contrast")
-     paste("The median Scan Time for the lab is ", median(ugh3$Scan_Time), " (format is hh:mm:ss)", sep = "")
+      st_text3 <- ugh %>% filter(Contrast == "Contrast")
+     paste("The median Scan Time for the lab is ", median(st_text3$Scan_Time), " (format is hh:mm:ss)", sep = "")
     }
        else {
-     paste("The median Scan Time for the lab is: ", median(ugh$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     paste("The median Scan Time for the lab is: ", median(st_text$Scan_Time), " (format is hh:mm:ss)", sep = "")
    }
     })
   
@@ -116,18 +116,33 @@ shinyServer(function(input, output, session) {
     
     if(input$portablereport){
       g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") 
-      #+ geom_hline(aes(yintercept = median(medRTport)), color = "red")
+     
     } else {
       g<-ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") 
-      #+ geom_hline(aes(yintercept = median(medreptime)), color = "red")
+     
     }
     ggplotly(g)
   })
+  
+  
   # report Time click table 
   output$info2<-renderPrint({
     event_data("plotly_click")
-    
   })
+  
+  
+  #Text to display lab medians of Report Time for selected subgroups
+  output$rt_text<-renderText({
+    rt_text<-getallData()
+    
+    if(input$portablereport){
+      rt_text1<-rt_text %>% filter(Portable =="Portable")
+      paste("The median Report Time for the lab is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
+    }     else {
+      paste("The median Report Time for the lab is: ", median(rt_text$Report_time), " (format is dd:hh:mm)", sep = "")
+    }
+  })
+  
   # Scan Time click table 
   output$click<-renderPrint({
     event_data("plotly_click")
@@ -158,6 +173,6 @@ shinyServer(function(input, output, session) {
   output$table <-DT::renderDataTable({
     datatabe<-getallData()
     new<-datatabe %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
-    DT::datatable(new, options = list(pageLength = 15))
+    DT::datatable(new, options = list(pageLength = 10))
   })
 })

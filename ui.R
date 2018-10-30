@@ -63,6 +63,7 @@ ui <- dashboardPage(skin="blue",
                                                     conditionalPanel(
                                                       condition = "input.class == 'Inpatient'",
                                                       checkboxInput("portablereport", "Portable")),
+                                                    textOutput("rt_text"),
                                                     plotlyOutput("medRepTimes"), 
                                                     verbatimTextOutput("info2"),
                                                     downloadButton("downloadplot2", "Download")),
