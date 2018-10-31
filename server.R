@@ -60,19 +60,15 @@ shinyServer(function(input, output, session) {
     
     
     if(input$contrastscan & input$portablescan){
-      g<-ggplot(scanboth, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
-    
+      g<-ggplot(scanboth, aes(x=staff_id, y = z_score))
     } else if(input$contrastscan){
-      g<-ggplot(scanContrast, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
-      
+      g<-ggplot(scanContrast, aes(x=staff_id, y = z_score))
     } else if(input$portablescan){
-      g<-ggplot(scanportable, aes(x=staff_id, y = z_score)) + geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
-      
+      g<-ggplot(scanportable, aes(x=staff_id, y = z_score))
     } else {
-      g<-ggplot(overall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Scan Times by Staff Member")
-      
+      g<-ggplot(overall, aes(x=staff_id, y = z_score))
     }
-    ggplotly(g)
+    g + geom_bar(stat = "identity")
   })
   
   #Text to display lab medians of Scan Time for selected subgroups
@@ -97,33 +93,41 @@ shinyServer(function(input, output, session) {
   
   
   #plot z score of Scan Times
-  output$medScanTimes <- renderPlotly({
+  output$medScanTimes <- renderPlot({
     scanTimeinput()
     
   })
   
   
   # plot z score of Report Times
-  output$medRepTimes <- renderPlotly({
+  output$medRepTimes <- renderPlot({
     #get filtered data
     report_port<-getReportPort()
     repoverall<-getReportDataall()
     
     
     if(input$portablereport){
-      g<-ggplot(report_port, aes(x=staff_id, y = z_score)) +geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Report Times by Staff Member")
-     
+      g<-ggplot(report_port, aes(x=staff_id, y = z_score))
+      g + geom_bar(stat = "identity") 
     } else {
-      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x="Staff ID", y = "Z Score", title = "Z Score of Report Times by Staff Member")
-     
+      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))
+      g + geom_bar(stat = "identity") 
     }
-    ggplotly(g)
   })
   
   
   # report Time click table 
   output$info2<-renderPrint({
-    event_data("plotly_click")
+    
+    #get filtered data
+    report_port<-getReportPort()
+    repoverall<-getReportDataall()
+    
+    if(input$portablereport){
+      nearPoints(report_port, input$plot_click,addDist = TRUE)
+    } else {
+      nearPoints(repoverall, input$plot_click,addDist = TRUE)
+    }
   })
   
   
@@ -141,7 +145,23 @@ shinyServer(function(input, output, session) {
   
   # Scan Time click table 
   output$click<-renderPrint({
-    event_data("plotly_click")
+    scanContrast<-getScanContrast()
+    scanboth<-getScanboth()
+    overall<-getscanDataall()
+    scanportable<-getScanPortable()
+    
+    
+    if(input$contrastscan & input$portablescan){
+      nearPoints(scanboth, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+    } else if(input$contrastscan){
+      nearPoints(scanContrast, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+    } else if(input$portablescan){
+      nearPoints(scanportable, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+      
+    } else {
+      nearPoints(overall, input$plot_click,addDist = TRUE)
+    }
+    
     
   })
   
@@ -153,6 +173,16 @@ shinyServer(function(input, output, session) {
     
     filename = function(){
       paste("ScanTime", input$class, ".png", sep = "")}, 
+    content = function(file){
+      ggsave(file, scanTimeinput())
+      
+    })
+  
+  #download scan time plot
+  output$downloadplot2<-downloadHandler(
+    
+    filename = function(){
+      paste("ReportTime", input$class, ".png", sep = "")}, 
     content = function(file){
       ggsave(file, scanTimeinput())
       
