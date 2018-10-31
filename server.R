@@ -18,12 +18,12 @@ shinyServer(function(input, output, session) {
   
   #Overall scan time by patient class
   getscanDataall <- reactive({
-    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medscantime=median(Scan_Time)) %>% mutate(z_score = scale(medscantime))
+    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medscantime=median(Scan_Time)) %>% mutate(z_score = scale(medscantime)) %>% select(-medscantime)
   })
   
   #overall report time by patient class
   getReportDataall <- reactive({
-    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))
+    newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))%>% select(-medreptime)
   })
   
   #overall data set filtered by Class
@@ -33,22 +33,22 @@ shinyServer(function(input, output, session) {
   
   #scan time by class and contrast
   getScanContrast<- reactive({
-    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTcontrast=median(Scan_Time))  %>% mutate(z_score = scale(medSTcontrast))
+    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTcontrast=median(Scan_Time))  %>% mutate(z_score = scale(medSTcontrast))%>% select(-medSTcontrast)
   })
   
   #scan time by class and portable
   getScanPortable<- reactive({
-    portableScan<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTport=median(Scan_Time)) %>% mutate(z_score = scale(medSTport))
+    portableScan<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medSTport=median(Scan_Time)) %>% mutate(z_score = scale(medSTport))%>% select(-medSTport)
   })
   
   #scan time by clas, portable, contrast
   getScanboth<- reactive({
-    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class, Portable =="Portable") %>% group_by(staff_id) %>% summarise(medSTboth=median(Scan_Time))%>% mutate(z_score = scale(medSTboth))
+    contrastScan<-df.csv %>% filter(Contrast=="Contrast", Class==input$class, Portable =="Portable") %>% group_by(staff_id) %>% summarise(medSTboth=median(Scan_Time))%>% mutate(z_score = scale(medSTboth))%>% select(-medSTboth)
   })
   
   #report time by class and portable
   getReportPort<- reactive({
-    reportPort<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medRTport=median(Report_time))%>% mutate(z_score = scale(medRTport))
+    reportPort<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medRTport=median(Report_time))%>% mutate(z_score = scale(medRTport))%>% select(-medRTport)
   })
   
   #create plotting function for Scan Time
@@ -144,7 +144,7 @@ shinyServer(function(input, output, session) {
   })
   
   # Scan Time click table 
-  output$click<-renderPrint({
+  output$info<-renderPrint({
     scanContrast<-getScanContrast()
     scanboth<-getScanboth()
     overall<-getscanDataall()
