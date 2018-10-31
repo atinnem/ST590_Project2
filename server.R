@@ -68,7 +68,7 @@ shinyServer(function(input, output, session) {
     } else {
       g<-ggplot(overall, aes(x=staff_id, y = z_score))
     }
-    g + geom_bar(stat = "identity")
+    g + geom_bar(stat = "identity")+labs(x = "Staff ID", y = "Z Score")
   })
   
   #Text to display lab medians of Scan Time for selected subgroups
@@ -108,10 +108,10 @@ shinyServer(function(input, output, session) {
     
     if(input$portablereport){
       g<-ggplot(report_port, aes(x=staff_id, y = z_score))
-      g + geom_bar(stat = "identity") 
+      g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
     } else {
       g<-ggplot(repoverall, aes(x=staff_id, y = z_score))
-      g + geom_bar(stat = "identity") 
+      g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
     }
   })
   
@@ -124,9 +124,9 @@ shinyServer(function(input, output, session) {
     repoverall<-getReportDataall()
     
     if(input$portablereport){
-      nearPoints(report_port, input$plot_click,addDist = TRUE)
+      nearPoints(report_port, input$plot_click,threshold = 20, maxpoints = 1)
     } else {
-      nearPoints(repoverall, input$plot_click,addDist = TRUE)
+      nearPoints(repoverall, input$plot_click,threshold = 20, maxpoints = 1)
     }
   })
   
@@ -152,14 +152,14 @@ shinyServer(function(input, output, session) {
     
     
     if(input$contrastscan & input$portablescan){
-      nearPoints(scanboth, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+      nearPoints(scanboth, input$plot_click, threshold = 20, maxpoints = 1 )
     } else if(input$contrastscan){
-      nearPoints(scanContrast, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+      nearPoints(scanContrast, input$plot_click, threshold = 20, maxpoints = 1)
     } else if(input$portablescan){
-      nearPoints(scanportable, input$plot_click, threshold = 20, maxpoints = 1, addDist = TRUE)
+      nearPoints(scanportable, input$plot_click, threshold = 20, maxpoints = 1)
       
     } else {
-      nearPoints(overall, input$plot_click,addDist = TRUE)
+      nearPoints(overall, input$plot_click,threshold = 20, maxpoints = 1)
     }
     
     
