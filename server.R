@@ -82,16 +82,16 @@ shinyServer(function(input, output, session) {
    
    if(input$contrastscan & input$portablescan){
      st_text1<- st_text %>% filter(Contrast == "Contrast", Portable =="Portable")
-      paste( "The median Scan Time for the lab is: ", median(st_text1$Scan_Time), " (format is hh:mm:ss)", sep = "")
+      paste( "The overall median Scan Time for this subset of patients is: ", median(st_text1$Scan_Time), " (format is dd:hh:mm)", sep = "")
    } else if(input$portablescan){
      st_text2<-st_text %>% filter(Portable =="Portable")
-     paste("The median Scan Time for the lab is: ", median(st_text2$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is: ", median(st_text2$Scan_Time), " (format is dd:hh:mm)", sep = "")
    }  else if(input$contrastscan){
       st_text3 <- st_text %>% filter(Contrast == "Contrast")
-     paste("The median Scan Time for the lab is ", median(st_text3$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is: ", median(st_text3$Scan_Time), " (format is dd:hh:mm)", sep = "")
     }
        else {
-     paste("The median Scan Time for the lab is: ", median(st_text$Scan_Time), " (format is hh:mm:ss)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is: ", median(st_text$Scan_Time), " (format is dd:hh:mm)", sep = "")
    }
     })
   
@@ -133,9 +133,9 @@ shinyServer(function(input, output, session) {
     
     if(input$portablereport){
       rt_text1<-rt_text %>% filter(Portable =="Portable")
-      paste("The median Report Time for the lab is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
+      paste("TThe overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
     }     else {
-      paste("The median Report Time for the lab is: ", median(rt_text$Report_time), " (format is dd:hh:mm)", sep = "")
+      paste("The overall median Report Time for this subset of patients is: ", median(rt_text$Report_time), " (format is dd:hh:mm)", sep = "")
     }
   })
   

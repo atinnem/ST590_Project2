@@ -36,16 +36,16 @@ ui <- dashboardPage(skin="purple",
                                              h4("Outpatient - Patients seen in an outpatient clinic"),
                                              h4("Portable - inpatients who were unable to travel to the department"),
                                              h4("Contrast - Studies that utilized an image enhancing agent.  These studies require a nurse as well as a sonographer"),
-                                             h4("Z-score - The average times per sonograhper were standardized using the formula:"),
+                                             h4("Z-score - The average times per sonographer were standardized using the formula:"),
                                              withMathJax(),
-                                             h4('$$\\frac{Variable-mean(Variable)}{sd(variable)}$$')
+                                             h4('$$\\frac{Variable-mean(Variable)}{sd(Variable)}$$')
                                          ))),
                               fluidRow(
                                 column(12,
                                        h1("Why standardized scores?"),
                                        box(background = "purple", width = 24,
                                            h4("Displaying standardized scores proved to be invaluable in communicating the meaning of the analysis to managers and colleagues with no statistical background."),
-                                           h4("With one glance you can easily appreciate staff who are outperforming their coworkers.  Staff were also able to easily see how they compared to one another. This level of intuitive understanding was lacking when median times were displayed. ")))
+                                           h4("With one glance you can easily appreciate staff who are outperforming their coworkers.  Staff were also able to easily see how they compared to one another. This level of intuitive understanding was lacking when the output was a plot of median times. ")))
                               ) 
                         ),
                         tabItem(tabName = "app",
@@ -58,7 +58,6 @@ ui <- dashboardPage(skin="purple",
                                            id = "tabset1", height = "500px", width = "250px",
                                            tabPanel("Scan Time", 
                                                     checkboxInput("contrastscan", "Contrast"),
-                                                    br(),
                                                     conditionalPanel(condition = "input.class == 'Inpatient'", 
                                                                      checkboxInput("portablescan", "Portable")),
                                                     br(),
