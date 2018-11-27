@@ -16,6 +16,23 @@ colnames(df.csv)[colnames(df.csv)=="log_resptech"]<-"staff_id"
 
 shinyServer(function(input, output, session) {
   
+  #remove outliers and create factors
+  df.csv$Class<-as.factor(df.csv$Class)
+  df.csv$Contrast<-as.factor(df.csv$Contrast)
+  df.csv$Portable<-as.factor(df.csv$Portable)
+  
+  df.csv<- df.csv %>% filter(Report_time<max(Report_time))
+  df.csv<-df.csv %>% filter(Report_time> 2)
+  df.csv<- df.csv %>% filter(Scan_Time>5)
+  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time))
+  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time))
+  
+  #subset data to be used in prediction/analysis
+  
+  getport_cont<-reactive({df.csv %>% filter(Class == input$class, Portable == "Portable", Contrast == "Contrast")})
+  getport<-reactive({df.csv %>% filter(Class == "Inpatient", Portable == "Portable")})
+  getcont<-reactive({df.csv %>% filter(Class == input$class, Contrast == "Contrast")})
+  
   #Overall scan time by patient class
   getscanDataall <- reactive({
     newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medscantime=median(Scan_Time)) %>% mutate(z_score = scale(medscantime)) %>% select(-medscantime)
@@ -51,8 +68,26 @@ shinyServer(function(input, output, session) {
     reportPort<-df.csv %>% filter(Portable=="Portable", Class==input$class) %>% group_by(staff_id) %>% summarise(medRTport=median(Report_time))%>% mutate(z_score = scale(medRTport))%>% select(-medRTport)
   })
   
+  
   #create plotting function for Scan Time
   scanTimeinput<-reactive({
+    port_cont<-getport_cont()
+    port<- getport()
+    cont<-getcont()
+    
+    if(input$contrastscan & input$portablescan){
+      ggplot(port_cont, aes(x = Report_time, y = Scan_Time)) + geom_point() + geom_smooth(method = "lm")
+    } else if(input$contrastscan){
+      ggplot(cont, aes(x = Report_time, y = Scan_Time)) + geom_point(aes(col = Contrast)) + geom_smooth(method = "lm", aes(col=Contrast))
+    } else if(input$portablescan){
+      ggplot(port, aes(x = Report_time, y = Scan_Time)) + geom_point(aes(col = Portable)) + geom_smooth(method = "lm", aes(col=Portable))
+    } else {
+      ggplot(df.csv, aes(x = Report_time, y = Scan_Time)) + geom_point() + geom_smooth(method = "lm")
+    }
+    
+  })
+  
+  scanTimeinput2<-reactive({
     scanContrast<-getScanContrast()
     scanboth<-getScanboth()
     overall<-getscanDataall()
@@ -70,7 +105,6 @@ shinyServer(function(input, output, session) {
     }
     g + geom_bar(stat = "identity")+labs(x = "Staff ID", y = "Z Score")
   })
-  
   #Text to display lab medians of Scan Time for selected subgroups
   output$attempt<-renderText({
    st_text<-getallData()
@@ -94,10 +128,15 @@ shinyServer(function(input, output, session) {
   
   #plot z score of Scan Times
   output$medScanTimes <- renderPlot({
-    scanTimeinput()
+    scanTimeinput2()
     
   })
   
+  
+  #plot Scan Time regression 
+  output$stregression<-renderPlot({
+    scanTimeinput()
+  })
   
   # plot z score of Report Times
   output$medRepTimes <- renderPlot({

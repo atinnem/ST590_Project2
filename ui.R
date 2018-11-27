@@ -66,6 +66,7 @@ ui <- dashboardPage(skin="purple",
                                                     plotOutput("medScanTimes", click = "plot_click"), 
                                                     h4("Click on the peak of a bar to view the staff_id and z_score."),
                                                     verbatimTextOutput("info"), 
+                                                    plotOutput("stregression"),
                                                     downloadButton("downloadplot1", "Download")
                                            ),
                                            tabPanel("Report Time", 
