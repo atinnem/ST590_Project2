@@ -28,7 +28,7 @@ shinyServer(function(input, output, session) {
   df.csv<- df.csv %>% filter(Scan_Time>5)
   df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
   levels(df.csv$Contrast)[levels(df.csv$Contrast)=="no Contrast"] <- "No Contrast"
-  
+  levels(df.csv$staff_id)
 
   #create linear regression fit to be used for prediction
   
@@ -260,7 +260,7 @@ getClass<-reactive({
 ###this works.  will need do do logic here or change to dropdown because portable and contrast are yes/no.  not "contrast' no contrast
 predictLM<-reactive({
   fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
-  predict(fit, data.frame(Class = c(input$class),staff_id=c("29"), Portable = c(input$portable), Contrast = c("Contrast")))
+  predict(fit, data.frame(Class = c(input$class),staff_id=input$Staff, Portable = c(input$portable), Contrast = input$contrast))
 })
 
 

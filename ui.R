@@ -87,6 +87,7 @@ ui <- dashboardPage(skin="purple",
                                            tabPanel("Analysis", 
                                                     h4("words"),
                                                     uiOutput("text23"),
+                                                    selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:29)),
                                                     plotOutput("cluster")
                                                     
                                                     #conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
