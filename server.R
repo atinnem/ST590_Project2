@@ -260,7 +260,7 @@ getClass<-reactive({
 ###this works.  will need do do logic here or change to dropdown because portable and contrast are yes/no.  not "contrast' no contrast
 predictLM<-reactive({
   fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
-  predict(fit, data.frame(Class = c(input$class),staff_id=input$Staff, Portable = c(input$portable), Contrast = input$contrast))
+  predict(fit, data.frame(Class = c(input$class),staff_id=c(input$Staff), Portable = c(input$portable), Contrast = input$contrast))
 })
 
 

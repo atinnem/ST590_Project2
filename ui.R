@@ -87,7 +87,7 @@ ui <- dashboardPage(skin="purple",
                                            tabPanel("Analysis", 
                                                     h4("words"),
                                                     uiOutput("text23"),
-                                                    selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:29)),
+                                                    selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:22)),
                                                     selectizeInput("num_clus", "Number of Clusters", selected = "29", choices = seq(1:100)),
                                                     plotOutput("cluster")
                                                     
