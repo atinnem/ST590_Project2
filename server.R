@@ -27,6 +27,10 @@ shinyServer(function(input, output, session) {
   df.csv<- df.csv %>% filter(Scan_Time>5)
   df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
 
+  #create linear regression fit to be used for prediction
+  fit<-lm(Scan_Time ~ Class + Contrast + Portable + staff_id, data = df.csv)
+  
+  
   
   #subset data to be used in prediction/analysis
   
@@ -139,6 +143,8 @@ shinyServer(function(input, output, session) {
     scanTimeinput()
   })
   
+  
+
   # plot z score of Report Times
   output$medRepTimes <- renderPlot({
     #get filtered data
@@ -241,4 +247,14 @@ shinyServer(function(input, output, session) {
     new<-datatabe %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
     DT::datatable(new, options = list(pageLength = 10))
   })
+})
+
+
+
+#Text to display predictions from lm analysis
+
+output$textString<-renderText({
+  rt_text<-getallData()
+  paste("TThe overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)")
+  
 })

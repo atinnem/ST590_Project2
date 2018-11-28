@@ -87,14 +87,11 @@ ui <- dashboardPage(skin="purple",
                                                     DT::dataTableOutput("table"),
                                                     downloadButton("downloadData", "Download")),
                                            tabPanel("Analysis", 
-                                                    #checkboxInput("contrastscan", "Contrast"),
-                                                    #conditionalPanel(condition = "input.class == 'Inpatient'", 
-                                                                     checkboxInput("portablescan", "Portable")),
-                                                    br(),
-                                                    textOutput("NAME HERE"),
-                                                    conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
+                                                    h4("words"),
+                                                    textOutput("textString")
+                                                    #conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
                                          )
                                   ))
                         )
                       )
-                    ))
+                    )))
