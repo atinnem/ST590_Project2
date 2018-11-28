@@ -53,9 +53,9 @@ ui <- dashboardPage(skin="purple",
                                   column(3,
                                          box(width = 12, title = "Please select a subset of patients for analysis",
                                              selectizeInput("class", "Class", selected = "Outpatient", choices = levels(as.factor(df.csv$Class))),
-                                             checkboxInput("contrastscan", "Contrast"),
-                                             conditionalPanel(condition = "input.class == 'Inpatient'", 
-                                                              checkboxInput("portablescan", "Portable"))
+                                             selectizeInput("contrast", "Contrast Usage", choices = levels(as.factor(df.csv$Contrast)), selected = "No Contrast"),
+                                             conditionalPanel(condition = "input.class=='Inpatient'", 
+                                                              selectizeInput("portable", "Portable", choices = levels(as.factor(df.csv$Portable)), selected = "Not Portable"))
                                              )),
                                   column(9,
                                          tabBox(

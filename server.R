@@ -27,6 +27,8 @@ shinyServer(function(input, output, session) {
   df.csv<-df.csv %>% filter(Report_time> 2)
   df.csv<- df.csv %>% filter(Scan_Time>5)
   df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
+  levels(df.csv$Contrast)[levels(df.csv$Contrast)=="no Contrast"] <- "No Contrast"
+  
 
   #create linear regression fit to be used for prediction
   
@@ -81,11 +83,11 @@ shinyServer(function(input, output, session) {
     port<- getport()
     cont<-getcont()
     
-    if(input$contrastscan & input$portablescan){
+    if(input$contrast=="Contrast" & input$portable=="Portable"){
       ggplot(port_cont, aes(x = Report_time, y = Scan_Time)) + geom_point() + geom_smooth(method = "lm")
-    } else if(input$contrastscan){
+    } else if(input$contrast=="Contrast"){
       ggplot(cont, aes(x = Report_time, y = Scan_Time)) + geom_point(aes(col = Contrast)) + geom_smooth(method = "lm", aes(col=Contrast))
-    } else if(input$portablescan){
+    } else if(input$portable=="Portable"){
       ggplot(port, aes(x = Report_time, y = Scan_Time)) + geom_point(aes(col = Portable)) + geom_smooth(method = "lm", aes(col=Portable))
     } else {
       ggplot(df.csv, aes(x = Report_time, y = Scan_Time)) + geom_point() + geom_smooth(method = "lm")
@@ -100,11 +102,11 @@ shinyServer(function(input, output, session) {
     scanportable<-getScanPortable()
     
     
-    if(input$contrastscan & input$portablescan){
+    if(input$contrast=="Contrast" & input$portable=="Portable"){
       g<-ggplot(scanboth, aes(x=staff_id, y = z_score))
-    } else if(input$contrastscan){
+    } else if(input$contrast=="Contrast"){
       g<-ggplot(scanContrast, aes(x=staff_id, y = z_score))
-    } else if(input$portablescan){
+    } else if(input$portable=="Portable"){
       g<-ggplot(scanportable, aes(x=staff_id, y = z_score))
     } else {
       g<-ggplot(overall, aes(x=staff_id, y = z_score))
@@ -116,13 +118,13 @@ shinyServer(function(input, output, session) {
    st_text<-getallData()
    scanportable<-getScanPortable()
    
-   if(input$contrastscan & input$portablescan){
+   if(input$contrast=="Contrast" & input$portable=="Portable"){
      st_text1<- st_text %>% filter(Contrast == "Contrast", Portable =="Portable")
       paste( "The overall median Scan Time for this subset of patients is: ", median(st_text1$Scan_Time), " (format is dd:hh:mm)", sep = "")
-   } else if(input$portablescan){
+   } else if(input$portable=="Portable"){
      st_text2<-st_text %>% filter(Portable =="Portable")
      paste("The overall median Scan Time for this subset of patients is: ", median(st_text2$Scan_Time), " (format is dd:hh:mm)", sep = "")
-   }  else if(input$contrastscan){
+   }  else if(input$contrast=="Contrast"){
       st_text3 <- st_text %>% filter(Contrast == "Contrast")
      paste("The overall median Scan Time for this subset of patients is: ", median(st_text3$Scan_Time), " (format is dd:hh:mm)", sep = "")
     }
@@ -153,7 +155,7 @@ shinyServer(function(input, output, session) {
     repoverall<-getReportDataall()
     
     
-    if(input$portablescan){
+    if(input$portable=="Portable"){
       g<-ggplot(report_port, aes(x=staff_id, y = z_score))
       g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
     } else {
@@ -170,7 +172,7 @@ shinyServer(function(input, output, session) {
     report_port<-getReportPort()
     repoverall<-getReportDataall()
     
-    if(input$portablescan){
+    if(input$portable=="Portable"){
       nearPoints(report_port, input$plot_click,threshold = 20, maxpoints = 1)
     } else {
       nearPoints(repoverall, input$plot_click,threshold = 20, maxpoints = 1)
@@ -182,7 +184,7 @@ shinyServer(function(input, output, session) {
   output$rt_text<-renderText({
     rt_text<-getallData()
     
-    if(input$portablescan){
+    if(input$portable=="Portable"){
       rt_text1<-rt_text %>% filter(Portable =="Portable")
       paste("The overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
     }     else {
@@ -198,11 +200,11 @@ shinyServer(function(input, output, session) {
     scanportable<-getScanPortable()
     
     
-    if(input$contrastscan & input$portablescan){
+    if(input$contrast=="Contrast" & input$portable=="Portable"){
       nearPoints(scanboth, input$plot_click, threshold = 20, maxpoints = 1 )
-    } else if(input$contrastscan){
+    } else if(input$contrast=="Contrast"){
       nearPoints(scanContrast, input$plot_click, threshold = 20, maxpoints = 1)
-    } else if(input$portablescan){
+    } else if(input$portable=="Portable"){
       nearPoints(scanportable, input$plot_click, threshold = 20, maxpoints = 1)
       
     } else {
@@ -258,7 +260,7 @@ getClass<-reactive({
 ###this works.  will need do do logic here or change to dropdown because portable and contrast are yes/no.  not "contrast' no contrast
 predictLM<-reactive({
   fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
-  predict(fit, data.frame(Class = c(input$class),staff_id=c("29"), Portable = c(input$portablescan), Contrast = c("Contrast")))
+  predict(fit, data.frame(Class = c(input$class),staff_id=c("29"), Portable = c(input$portable), Contrast = c("Contrast")))
 })
 
 
