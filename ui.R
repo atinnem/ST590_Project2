@@ -88,7 +88,8 @@ ui <- dashboardPage(skin="purple",
                                                     downloadButton("downloadData", "Download")),
                                            tabPanel("Analysis", 
                                                     h4("words"),
-                                                    textOutput("textString")
+                                                    uiOutput("text23")
+                                                    
                                                     #conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
                                          )
                                   ))

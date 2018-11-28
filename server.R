@@ -20,6 +20,7 @@ shinyServer(function(input, output, session) {
   df.csv$Class<-as.factor(df.csv$Class)
   df.csv$Contrast<-as.factor(df.csv$Contrast)
   df.csv$Portable<-as.factor(df.csv$Portable)
+  df.csv$staff_id<-as.factor(df.csv$staff_id)
   
   df.csv<- df.csv %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time))
   
@@ -247,14 +248,16 @@ shinyServer(function(input, output, session) {
     new<-datatabe %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
     DT::datatable(new, options = list(pageLength = 10))
   })
-})
+
 
 
 
 #Text to display predictions from lm analysis
 
-output$textString<-renderText({
-  rt_text<-getallData()
-  paste("TThe overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)")
-  
+output$text23<-renderUI({
+  text<-paste("omg", predict(fit, newdata = data.frame(Class = c("Inpatient"),staff_id=c("29"), Portable = c("Not Portable"), Contrast = c("Contrast")))
+)
+  h3(text)
+})
+
 })
