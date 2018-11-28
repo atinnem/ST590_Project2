@@ -268,17 +268,15 @@ predictLM<-reactive({
 
 output$text23<-renderUI({
   Class<-getClass()
-  text<-paste("omg", predictLM())
+  text<-paste("omg", round(predictLM(),2))
 
   h3(text)
 })
-cluster<-kmeans(df.csv$Report_time, 10, nstart = 20)
-cluster$cluster<-as.factor(cluster$cluster)
-ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
+
 
 
 output$cluster<-renderPlot({
-  cluster<-kmeans(df.csv$Report_time, 10, nstart = 20)
+  cluster<-kmeans(df.csv$Report_time, centers =  input$num_clus, nstart = 20)
   cluster$cluster<-as.factor(cluster$cluster)
   ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
 })
