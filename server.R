@@ -21,11 +21,12 @@ shinyServer(function(input, output, session) {
   df.csv$Contrast<-as.factor(df.csv$Contrast)
   df.csv$Portable<-as.factor(df.csv$Portable)
   
-  df.csv<- df.csv %>% filter(Report_time<max(Report_time))
+  df.csv<- df.csv %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time))
+  
   df.csv<-df.csv %>% filter(Report_time> 2)
   df.csv<- df.csv %>% filter(Scan_Time>5)
-  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time))
-  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time))
+  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
+
   
   #subset data to be used in prediction/analysis
   

@@ -52,14 +52,17 @@ ui <- dashboardPage(skin="purple",
                                 fluidRow(
                                   column(3,
                                          box(width = 12, title = "Please select a subset of patients for analysis",
-                                             selectizeInput("class", "Class", selected = "Outpatient", choices = levels(as.factor(df.csv$Class))))),
+                                             selectizeInput("class", "Class", selected = "Outpatient", choices = levels(as.factor(df.csv$Class))),
+                                             checkboxInput("contrastscan", "Contrast"),
+                                             conditionalPanel(condition = "input.class == 'Inpatient'", 
+                                                              checkboxInput("portablescan", "Portable"))
+                                             )),
                                   column(9,
                                          tabBox(
                                            id = "tabset1", height = "500px", width = "250px",
                                            tabPanel("Scan Time", 
-                                                    checkboxInput("contrastscan", "Contrast"),
-                                                    conditionalPanel(condition = "input.class == 'Inpatient'", 
-                                                                     checkboxInput("portablescan", "Portable")),
+                                                    
+                                                   
                                                     br(),
                                                     textOutput("attempt"),
                                                     conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;")),
@@ -82,7 +85,14 @@ ui <- dashboardPage(skin="purple",
                                            tabPanel("Dataset",
                                                     "A condensed sample of the dataset is shown here.  To download the complete dataset please click the download button at the bottom of the page", 
                                                     DT::dataTableOutput("table"),
-                                                    downloadButton("downloadData", "Download"))
+                                                    downloadButton("downloadData", "Download")),
+                                           tabPanel("Analysis", 
+                                                    #checkboxInput("contrastscan", "Contrast"),
+                                                    #conditionalPanel(condition = "input.class == 'Inpatient'", 
+                                                                     checkboxInput("portablescan", "Portable")),
+                                                    br(),
+                                                    textOutput("NAME HERE"),
+                                                    conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
                                          )
                                   ))
                         )
