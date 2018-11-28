@@ -61,9 +61,7 @@ ui <- dashboardPage(skin="purple",
                                          tabBox(
                                            id = "tabset1", height = "500px", width = "250px",
                                            tabPanel("Scan Time", 
-                                                    
-                                                   
-                                                    br(),
+                                                                                                       br(),
                                                     textOutput("attempt"),
                                                     conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;")),
                                                     plotOutput("medScanTimes", click = "plot_click"), 
@@ -73,11 +71,11 @@ ui <- dashboardPage(skin="purple",
                                                     downloadButton("downloadplot1", "Download")
                                            ),
                                            tabPanel("Report Time", 
-                                                    conditionalPanel(condition = "input.class == 'Inpatient'",
-                                                      checkboxInput("portablereport", "Portable")),
+                                                    #conditionalPanel(condition = "input.class == 'Inpatient'",
+                                                      #checkboxInput("portablereport", "Portable")),
                                                     textOutput("rt_text"),
                                                     br(),
-                                                    conditionalPanel(condition="input.class == 'Outpatient' && input.portablereport", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;")),
+                                                    conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;")),
                                                     plotOutput("medRepTimes", click = "plot_click"), 
                                                     h4("Click on the peak of a bar to view the staff_id and z_score."),
                                                     verbatimTextOutput("info2"),
@@ -88,7 +86,8 @@ ui <- dashboardPage(skin="purple",
                                                     downloadButton("downloadData", "Download")),
                                            tabPanel("Analysis", 
                                                     h4("words"),
-                                                    uiOutput("text23")
+                                                    uiOutput("text23"),
+                                                    plotOutput("cluster")
                                                     
                                                     #conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
                                          )

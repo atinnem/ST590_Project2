@@ -29,7 +29,7 @@ shinyServer(function(input, output, session) {
   df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
 
   #create linear regression fit to be used for prediction
-  fit<-lm(Scan_Time ~ Class + Contrast + Portable + staff_id, data = df.csv)
+  
   
   
   
@@ -153,7 +153,7 @@ shinyServer(function(input, output, session) {
     repoverall<-getReportDataall()
     
     
-    if(input$portablereport){
+    if(input$portablescan){
       g<-ggplot(report_port, aes(x=staff_id, y = z_score))
       g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
     } else {
@@ -170,7 +170,7 @@ shinyServer(function(input, output, session) {
     report_port<-getReportPort()
     repoverall<-getReportDataall()
     
-    if(input$portablereport){
+    if(input$portablescan){
       nearPoints(report_port, input$plot_click,threshold = 20, maxpoints = 1)
     } else {
       nearPoints(repoverall, input$plot_click,threshold = 20, maxpoints = 1)
@@ -182,9 +182,9 @@ shinyServer(function(input, output, session) {
   output$rt_text<-renderText({
     rt_text<-getallData()
     
-    if(input$portablereport){
+    if(input$portablescan){
       rt_text1<-rt_text %>% filter(Portable =="Portable")
-      paste("TThe overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
+      paste("The overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
     }     else {
       paste("The overall median Report Time for this subset of patients is: ", median(rt_text$Report_time), " (format is dd:hh:mm)", sep = "")
     }
@@ -225,7 +225,7 @@ shinyServer(function(input, output, session) {
       
     })
   
-  #download scan time plot
+  #download report time plot
   output$downloadplot2<-downloadHandler(
     
     filename = function(){
@@ -250,14 +250,36 @@ shinyServer(function(input, output, session) {
   })
 
 
+getClass<-reactive({
+  Class <-input$class
+})
+
+
+###this works.  will need do do logic here or change to dropdown because portable and contrast are yes/no.  not "contrast' no contrast
+predictLM<-reactive({
+  fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
+  predict(fit, data.frame(Class = c(input$class),staff_id=c("29"), Portable = c(input$portablescan), Contrast = c("Contrast")))
+})
 
 
 #Text to display predictions from lm analysis
 
 output$text23<-renderUI({
-  text<-paste("omg", predict(fit, newdata = data.frame(Class = c("Inpatient"),staff_id=c("29"), Portable = c("Not Portable"), Contrast = c("Contrast")))
-)
+  Class<-getClass()
+  text<-paste("omg", predictLM())
+
   h3(text)
 })
+cluster<-kmeans(df.csv$Report_time, 10, nstart = 20)
+cluster$cluster<-as.factor(cluster$cluster)
+ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
+
+
+output$cluster<-renderPlot({
+  cluster<-kmeans(df.csv$Report_time, 10, nstart = 20)
+  cluster$cluster<-as.factor(cluster$cluster)
+  ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
+})
+
 
 })
