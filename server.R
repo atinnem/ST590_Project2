@@ -149,9 +149,9 @@ shinyServer(function(input, output, session) {
   
   
   #plot Scan Time regression 
-  output$stregression<-renderPlot({
-    scanTimeinput()
-  })
+  #output$stregression<-renderPlot({
+   # scanTimeinput()
+ # })
   
   
 
