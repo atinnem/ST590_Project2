@@ -9,6 +9,8 @@ library(plotly)
 library(tree)
 library(gbm)
 library(lubridate)
+library(class)
+
 
 df.csv<-read_csv("procedure_times.csv")
 
@@ -28,6 +30,8 @@ df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
 
 df.csv$Report_time<-hms(df.csv$Report_time) 
 df.csv$Report_time<-as.numeric(df.csv$Report_time)  
+
+df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 300) %>% filter(Report_time<20000)
 
 ui <- dashboardPage(skin="purple",
                     header<-dashboardHeader(title = "Procedure Times"),

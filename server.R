@@ -8,6 +8,8 @@ library(plotly)
 library(tree)
 library(gbm)
 library(lubridate)
+library(class)
+
 
 df.csv<-read_csv("procedure_times.csv")
 
@@ -28,18 +30,12 @@ df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
 df.csv$Report_time<-hms(df.csv$Report_time) 
 df.csv$Report_time<-as.numeric(df.csv$Report_time)  
 
+df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 300) %>% filter(Report_time<20000)
 
 shinyServer(function(input, output, session) {
   
  
-  
-  df.csv<- df.csv %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time))
-  
-  df.csv<-df.csv %>% filter(Report_time> 2)
-  df.csv<- df.csv %>% filter(Scan_Time>5)
-  df.csv<- df.csv %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time)) %>% filter(Scan_Time<max(Scan_Time))
-  levels(df.csv$Contrast)[levels(df.csv$Contrast)=="no Contrast"] <- "No Contrast"
-  levels(df.csv$staff_id)
+
 
   #create linear regression fit to be used for prediction
   
@@ -283,7 +279,7 @@ predictTree<-reactive({
 
 output$text23<-renderUI({
   Class<-getClass()
-  text<-paste("omg", round(predictLM(),2))
+  text<-paste("omg", round(predictLM()/60,2))
 
   h3(text)
 })
@@ -297,7 +293,7 @@ output$text24<-renderUI({
 
 
 output$cluster<-renderPlot({
-  cluster<-kmeans(df.csv$Report_time, centers =  input$num_clus, nstart = 20)
+  cluster<-kmeans(df.csv[,3:4], input$num_clus, nstart = 20)
   cluster$cluster<-as.factor(cluster$cluster)
   ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
 })
