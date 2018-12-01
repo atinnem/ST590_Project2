@@ -254,7 +254,7 @@ shinyServer(function(input, output, session) {
   #dataset
   output$table <-DT::renderDataTable({
     datatabe<-getallData()
-    new<-datatabe %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
+    new<-datatabe %>% filter(Class ==input$class, Portable ==input$portable, Contrast == input$contrast) %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
     DT::datatable(new, options = list(pageLength = 10))
   })
 
