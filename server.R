@@ -57,9 +57,13 @@ shinyServer(function(input, output, session) {
   getReportDataall <- reactive({
     newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))%>% select(-medreptime)
   })
-  #overall report time by patient class
+  #overall report time by patient class - USE
   getattempt <- reactive({
     attempt <- df.csv %>% filter(Class == input$class, Portable == input$portable, Contrast ==input$contrast) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))%>% select(-medreptime)
+  })
+  
+  getattempt2 <- reactive({
+    attempt <- df.csv %>% filter(Class == input$class, Portable == input$portable, Contrast ==input$contrast) 
   })
   
   #overall data set filtered by Class
@@ -131,16 +135,16 @@ shinyServer(function(input, output, session) {
    
    if(input$contrast=="Contrast" & input$portable=="Portable"){
      st_text1<- st_text %>% filter(Contrast == "Contrast", Portable =="Portable")
-      paste( "The overall median Scan Time for this subset of patients is: ", median(st_text1$Scan_Time), " (format is dd:hh:mm)", sep = "")
+      paste( "The overall median Scan Time for this subset of patients is ", round(median(st_text1$Scan_Time)/60,1), " minutes.", sep = "")
    } else if(input$portable=="Portable"){
      st_text2<-st_text %>% filter(Portable =="Portable")
-     paste("The overall median Scan Time for this subset of patients is: ", median(st_text2$Scan_Time), " (format is dd:hh:mm)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is ", round(median(st_text2$Scan_Time)/60,1), " minutes.", sep = "")
    }  else if(input$contrast=="Contrast"){
       st_text3 <- st_text %>% filter(Contrast == "Contrast")
-     paste("The overall median Scan Time for this subset of patients is: ", median(st_text3$Scan_Time), " (format is dd:hh:mm)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is ", round(median(st_text3$Scan_Time)/60,1), " minutes", sep = "")
     }
        else {
-     paste("The overall median Scan Time for this subset of patients is: ", median(st_text$Scan_Time), " (format is dd:hh:mm)", sep = "")
+     paste("The overall median Scan Time for this subset of patients is ", round(median(st_text$Scan_Time)/60,1), " minutes", sep = "")
    }
     })
   
@@ -151,29 +155,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  
-  #plot Scan Time regression 
-  #output$stregression<-renderPlot({
-   # scanTimeinput()
- # })
-  
-  
 
-  # plot z score of Report Times
-  #output$medRepTimes <- renderPlot({
-    #get filtered data
-   # report_port<-getReportPort()
-    #repoverall<-getReportDataall()
-    
-    
-    #if(input$portable=="Portable"){
-    #  g<-ggplot(report_port, aes(x=staff_id, y = z_score))
-    #  g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
-   # } else {
-   #   g<-ggplot(repoverall, aes(x=staff_id, y = z_score))
-   #   g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
-  #  }
- # })
   
   # plot z score of Report Times
   output$medRepTimes <- renderPlot({
@@ -191,27 +173,25 @@ shinyServer(function(input, output, session) {
   output$info2<-renderPrint({
     
     #get filtered data
-    report_port<-getReportPort()
-    repoverall<-getReportDataall()
+    #report_port<-getReportPort()
+   # repoverall<-getReportDataall()
+    repoverall<-getattempt()
     
-    if(input$portable=="Portable"){
-      nearPoints(report_port, input$plot_click,threshold = 20, maxpoints = 1)
-    } else {
+    
+     
       nearPoints(repoverall, input$plot_click,threshold = 20, maxpoints = 1)
-    }
+    
   })
+  
+ 
   
   
   #Text to display lab medians of Report Time for selected subgroups
   output$rt_text<-renderText({
-    rt_text<-getallData()
+    rt_text1<-getattempt2()
     
-    if(input$portable=="Portable"){
-      rt_text1<-rt_text %>% filter(Portable =="Portable")
-      paste("The overall median Report Time for this subset of patients is: ", median(rt_text1$Report_time), " (format is dd:hh:mm)", sep = "")
-    }     else {
-      paste("The overall median Report Time for this subset of patients is: ", median(rt_text$Report_time), " (format is dd:hh:mm)", sep = "")
-    }
+      paste("The overall median Report Time for this subset of patients is ", round(median(rt_text1$Report_time)/60,1), " minutes.", sep = "")
+ 
   })
   
   # Scan Time click table 
