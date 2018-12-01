@@ -6,8 +6,28 @@ library(shiny)
 library(shinydashboard)
 library(tidyverse)
 library(plotly)
+library(tree)
+library(gbm)
+library(lubridate)
 
 df.csv<-read_csv("procedure_times.csv")
+
+#changing name for ease of interpretation by others
+colnames(df.csv)[colnames(df.csv)=="log_resptech"]<-"staff_id"
+
+#remove outliers and create factors
+df.csv$Class<-as.factor(df.csv$Class)
+df.csv$Contrast<-as.factor(df.csv$Contrast)
+df.csv$Portable<-as.factor(df.csv$Portable)
+df.csv$staff_id<-as.factor(df.csv$staff_id)
+
+levels(df.csv$Contrast)[levels(df.csv$Contrast)=="no Contrast"] <- "No Contrast"
+
+df.csv$Scan_Time<-hms(df.csv$Scan_Time)
+df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
+
+df.csv$Report_time<-hms(df.csv$Report_time) 
+df.csv$Report_time<-as.numeric(df.csv$Report_time)  
 
 ui <- dashboardPage(skin="purple",
                     header<-dashboardHeader(title = "Procedure Times"),
@@ -87,6 +107,7 @@ ui <- dashboardPage(skin="purple",
                                            tabPanel("Analysis", 
                                                     h4("words"),
                                                     uiOutput("text23"),
+                                                    uiOutput("text24"),
                                                     selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:29)),
                                                     selectizeInput("num_clus", "Number of Clusters", selected = "10", choices = seq(1:22)),
                                                     plotOutput("cluster")

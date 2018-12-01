@@ -5,22 +5,33 @@
 library(shiny)
 library(tidyverse)
 library(plotly)
-
-
+library(tree)
+library(gbm)
+library(lubridate)
 
 df.csv<-read_csv("procedure_times.csv")
 
 #changing name for ease of interpretation by others
 colnames(df.csv)[colnames(df.csv)=="log_resptech"]<-"staff_id"
 
+#remove outliers and create factors
+df.csv$Class<-as.factor(df.csv$Class)
+df.csv$Contrast<-as.factor(df.csv$Contrast)
+df.csv$Portable<-as.factor(df.csv$Portable)
+df.csv$staff_id<-as.factor(df.csv$staff_id)
+
+levels(df.csv$Contrast)[levels(df.csv$Contrast)=="no Contrast"] <- "No Contrast"
+
+df.csv$Scan_Time<-hms(df.csv$Scan_Time)
+df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
+
+df.csv$Report_time<-hms(df.csv$Report_time) 
+df.csv$Report_time<-as.numeric(df.csv$Report_time)  
+
 
 shinyServer(function(input, output, session) {
   
-  #remove outliers and create factors
-  df.csv$Class<-as.factor(df.csv$Class)
-  df.csv$Contrast<-as.factor(df.csv$Contrast)
-  df.csv$Portable<-as.factor(df.csv$Portable)
-  df.csv$staff_id<-as.factor(df.csv$staff_id)
+ 
   
   df.csv<- df.csv %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time)) %>% filter(Report_time<max(Report_time))
   
@@ -257,12 +268,16 @@ getClass<-reactive({
 })
 
 
-###this works.  will need do do logic here or change to dropdown because portable and contrast are yes/no.  not "contrast' no contrast
+###this works.  
 predictLM<-reactive({
   fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
   predict(fit, data.frame(Class = c(input$class),staff_id=c(input$Staff), Portable = c(input$portable), Contrast = input$contrast))
 })
 
+predictTree<-reactive({
+  fitTree<-tree(Scan_Time~ Class + Contrast + Portable + staff_id, data = df.csv)
+  predict(fitTree,data.frame(Class = c(input$class), Contrast = c(input$contrast), Portable = c(input$portable), staff_id = c(input$Staff)))
+  })
 
 #Text to display predictions from lm analysis
 
@@ -270,6 +285,12 @@ output$text23<-renderUI({
   Class<-getClass()
   text<-paste("omg", round(predictLM(),2))
 
+  h3(text)
+})
+
+output$text24<-renderUI({
+  text<-paste("tree prediction ",round(predictTree(),2))
+  
   h3(text)
 })
 
