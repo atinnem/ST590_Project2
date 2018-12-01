@@ -57,6 +57,10 @@ shinyServer(function(input, output, session) {
   getReportDataall <- reactive({
     newData <- df.csv %>% filter(Class == input$class) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))%>% select(-medreptime)
   })
+  #overall report time by patient class
+  getattempt <- reactive({
+    attempt <- df.csv %>% filter(Class == input$class, Portable == input$portable, Contrast ==input$contrast) %>% group_by(staff_id) %>% summarise(medreptime=median(Report_time)) %>% mutate(z_score = scale(medreptime))%>% select(-medreptime)
+  })
   
   #overall data set filtered by Class
   getallData<- reactive({
@@ -156,19 +160,30 @@ shinyServer(function(input, output, session) {
   
 
   # plot z score of Report Times
+  #output$medRepTimes <- renderPlot({
+    #get filtered data
+   # report_port<-getReportPort()
+    #repoverall<-getReportDataall()
+    
+    
+    #if(input$portable=="Portable"){
+    #  g<-ggplot(report_port, aes(x=staff_id, y = z_score))
+    #  g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
+   # } else {
+   #   g<-ggplot(repoverall, aes(x=staff_id, y = z_score))
+   #   g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
+  #  }
+ # })
+  
+  # plot z score of Report Times
   output$medRepTimes <- renderPlot({
     #get filtered data
-    report_port<-getReportPort()
-    repoverall<-getReportDataall()
+    repoverall<-getattempt()
+   #repoverall<-repoverall %>% filter(Portable == 'input$portable', Contrast == 'input$contrast')
     
     
-    if(input$portable=="Portable"){
-      g<-ggplot(report_port, aes(x=staff_id, y = z_score))
-      g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
-    } else {
-      g<-ggplot(repoverall, aes(x=staff_id, y = z_score))
-      g + geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
-    }
+      ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
+       
   })
   
   
@@ -286,13 +301,13 @@ predictTree<-reactive({
 
 output$text23<-renderUI({
   Class<-getClass()
-  text<-paste("Prediction of ", input$type, " using a linear model: ", round(predictLM()/60,2), " minutes.")
+  text<-paste("Prediction of ", input$type, " using a linear model: ", round(predictLM()/60,1), " minutes.")
 
   h3(text)
 })
 
 output$text24<-renderUI({
-  text<-paste("Prediction of ", input$type, "using a tree model: ", round(predictTree()/60,2), " minutes.")
+  text<-paste("Prediction of ", input$type, "using a tree model: ", round(predictTree()/60,1), " minutes.")
   
   h3(text)
 })

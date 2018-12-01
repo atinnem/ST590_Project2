@@ -108,17 +108,19 @@ ui <- dashboardPage(skin="purple",
                                                     DT::dataTableOutput("table"),
                                                     downloadButton("downloadData", "Download")),
                                            tabPanel("Analysis", 
-                                                    h4("Select the time frame you would like to predict.  Either Scan or Report time.  The Class, Contrast Usage, Staff, And Portable variables can all be used to specify your prediction."),
+                                                    h4("Select the time frame and variables you would like to analyze. Class, Contrast Usage, Staff, and Portable variables can all be used to specify your prediction."),
                                                     selectizeInput("type", "Scan or Report Time", selected = "Scan Time", choices = c("Scan_Time", "Report_time")),
                                                     selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:29)),
                                                     uiOutput("text23"),
                                                     uiOutput("text24"),
+                                                    br(),
+                                                    br(),
                                                     h4("Below is the result of a kmeans cluster analyis.  Please specify the desired number of clusters and the blah."),
                                                     selectizeInput("num_clus", "Number of Clusters", selected = "10", choices = seq(1:50)),
                                                     sliderInput("size", "Size of Points on Graph",min = .1, max = 5, value = 1, step = .1),
                                                     plotOutput("cluster")
                                                     
-                                                    #conditionalPanel(condition="input.class == 'Outpatient' && input.portablescan", h4("Please return to the Inpatient data and unselect 'Portable' (either under 'Scan Time' or 'Report Time' tabs) in order to see Outpatient studies", style = "color:red;"))
+                                                    
                                          )
                                   ))
                         )
