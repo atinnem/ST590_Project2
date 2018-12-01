@@ -266,12 +266,19 @@ getClass<-reactive({
 
 ###this works.  
 predictLM<-reactive({
-  fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
+  if(input$type=="Scan_Time"){
+    fit<-lm(Scan_Time ~ Class + staff_id + Portable + Contrast, data = df.csv)
+  } else{
+    fit<-lm(Report_time ~ Class + staff_id + Portable + Contrast, data = df.csv)
+  }
+  
   predict(fit, data.frame(Class = c(input$class),staff_id=c(input$Staff), Portable = c(input$portable), Contrast = input$contrast))
 })
 
 predictTree<-reactive({
-  fitTree<-tree(Scan_Time~ Class + Contrast + Portable + staff_id, data = df.csv)
+  if(input$type=="Scan_Time"){
+  fitTree<-tree(Scan_Time~ Class + Contrast + Portable + staff_id, data = df.csv)} else{
+    fitTree<-tree(Report_time~ Class + Contrast + Portable + staff_id, data = df.csv)}
   predict(fitTree,data.frame(Class = c(input$class), Contrast = c(input$contrast), Portable = c(input$portable), staff_id = c(input$Staff)))
   })
 
@@ -279,13 +286,13 @@ predictTree<-reactive({
 
 output$text23<-renderUI({
   Class<-getClass()
-  text<-paste("omg", round(predictLM()/60,2))
+  text<-paste("Prediction of ", input$type, " using a linear model: ", round(predictLM()/60,2), " minutes.")
 
   h3(text)
 })
 
 output$text24<-renderUI({
-  text<-paste("tree prediction ",round(predictTree(),2))
+  text<-paste("Prediction of ", input$type, "using a tree model: ", round(predictTree()/60,2), " minutes.")
   
   h3(text)
 })
@@ -295,7 +302,7 @@ output$text24<-renderUI({
 output$cluster<-renderPlot({
   cluster<-kmeans(df.csv[,3:4], input$num_clus, nstart = 20)
   cluster$cluster<-as.factor(cluster$cluster)
-  ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point()
+  ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point(size = input$size)
 })
 
 
