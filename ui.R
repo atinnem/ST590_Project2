@@ -118,9 +118,9 @@ ui <- dashboardPage(skin="purple",
                                                     uiOutput("text24"),
                                                     br(),
                                                     br(),
-                                                    h4("Below is the result of a kmeans cluster analysis.  Please specify the desired number of clusters and point siZE."),
+                                                    h4("Below is the result of unsupervised learning analysis.  Please specify the desired method, number of clusters, and point size."),
                                                     selectizeInput("cluster", "Type of Clustering", selected = "K Means", choices = c("K Means", "Hierarchial")),
-                                                    selectizeInput("num_clus", "Number of Clusters", selected = "30", choices = c(10:80)),
+                                                    selectizeInput("num_clus", "Number of Clusters", selected = "30", choices = c(10:49)),
                                                     sliderInput("size", "Size of Points on Graph",min = .1, max = 5, value = 1, step = .1),
                                                     plotOutput("cluster")
                                                     
