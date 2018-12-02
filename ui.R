@@ -31,7 +31,10 @@ df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
 df.csv$Report_time<-hms(df.csv$Report_time) 
 df.csv$Report_time<-as.numeric(df.csv$Report_time)  
 
-df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 300) %>% filter(Report_time<20000)
+df.csv$Scan_Time<-df.csv$Scan_Time/60
+df.csv$Report_time<-round(df.csv$Report_time/60,2)
+
+df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 5) %>% filter(Report_time<12)
 
 ui <- dashboardPage(skin="purple",
                     header<-dashboardHeader(title = "Procedure Times"),
@@ -109,14 +112,15 @@ ui <- dashboardPage(skin="purple",
                                                     downloadButton("downloadData", "Download")),
                                            tabPanel("Analysis", 
                                                     h4("Select the time frame and variables you would like to analyze. Class, Contrast Usage, Staff, and Portable variables can all be used to specify your prediction."),
-                                                    selectizeInput("type", "Scan or Report Time", selected = "Scan Time", choices = c("Scan_Time", "Report_time")),
+                                                    selectizeInput("type", "Response Variable", selected = "Scan_Time", choices = c("Scan_Time", "Report_time")),
                                                     selectizeInput("Staff", "Staff", selected = "1", choices = seq(1:29)),
                                                     uiOutput("text23"),
                                                     uiOutput("text24"),
                                                     br(),
                                                     br(),
-                                                    h4("Below is the result of a kmeans cluster analyis.  Please specify the desired number of clusters and the blah."),
-                                                    selectizeInput("num_clus", "Number of Clusters", selected = "10", choices = seq(1:50)),
+                                                    h4("Below is the result of a kmeans cluster analysis.  Please specify the desired number of clusters and point siZE."),
+                                                    selectizeInput("cluster", "Type of Clustering", selected = "K Means", choices = c("K Means", "Hierarchial")),
+                                                    selectizeInput("num_clus", "Number of Clusters", selected = "30", choices = c(10:80)),
                                                     sliderInput("size", "Size of Points on Graph",min = .1, max = 5, value = 1, step = .1),
                                                     plotOutput("cluster")
                                                     

@@ -30,7 +30,9 @@ df.csv$Scan_Time<-as.numeric(df.csv$Scan_Time)
 df.csv$Report_time<-hms(df.csv$Report_time) 
 df.csv$Report_time<-as.numeric(df.csv$Report_time)  
 
-df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 300) %>% filter(Report_time<20000)
+
+
+df.csv<-df.csv %>% filter(Scan_Time<9000 & Scan_Time> 500) %>% filter(Report_time<20000)
 
 shinyServer(function(input, output, session) {
   
@@ -295,9 +297,21 @@ output$text24<-renderUI({
 
 
 output$cluster<-renderPlot({
+  if(input$cluster == "K Means"){
   cluster<-kmeans(df.csv[,3:4], input$num_clus, nstart = 20)
   cluster$cluster<-as.factor(cluster$cluster)
-  ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point(size = input$size)
+  ggplot(df.csv, aes(Scan_Time, y = Report_time, color = cluster$cluster)) + geom_point(size = input$size) + labs(x= "Scan Time", y = "Report Time", title = "K Means Cluster Analysis") + scale_color_discrete(name = "# of Clusters")
+  }else{
+  
+  hierClust<-hclust(dist(data.frame(df.csv$Scan_Time, df.csv$Report_time)), method = "average")
+  
+  hier5<-cutree(hierClust, k =input$num_clus)
+  
+  
+  df_members<- cbind(df.csv, hier5)
+  #plot(df_members$Scan_Time, df_members$Report_time, col = df_members$hier5)
+  ggplot(df_members, aes(Scan_Time, y = Report_time, color =df_members$hier5)) + geom_point(size = input$size)+labs(x= "Scan Time", y = "Report Time", title = "Hierarchial Cluster Analysis")+ scale_colour_gradientn(colours = terrain.colors(10), name = "# of Clusters")
+  }
 })
 
 
