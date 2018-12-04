@@ -157,7 +157,12 @@ shinyServer(function(input, output, session) {
     
   })
   
-
+reptimeinput<-reactive({
+  repoverall<-getattempt()
+    ggplot(repoverall, aes(x=staff_id, y = z_score))+ geom_bar(stat = "identity") +labs(x = "Staff ID", y = "Z Score")
+    
+  
+})
   
   # plot z score of Report Times
   output$medRepTimes <- renderPlot({
@@ -227,7 +232,7 @@ shinyServer(function(input, output, session) {
     filename = function(){
       paste("ScanTime", input$class, ".png", sep = "")}, 
     content = function(file){
-      ggsave(file, scanTimeinput())
+      ggsave(file, scanTimeinput2())
       
     })
   
@@ -237,16 +242,20 @@ shinyServer(function(input, output, session) {
     filename = function(){
       paste("ReportTime", input$class, ".png", sep = "")}, 
     content = function(file){
-      ggsave(file, scanTimeinput())
+      ggsave(file, reptimeinput())
       
     })
   
   #data table download
   output$downloadData<-downloadHandler(filename = "procedure_times.csv", content = function(file){
-    write.csv(df.csv, file)
+    new_df<-table()
+    write.csv(new_df, file)
   })
 
-  
+  table<-reactive({
+    datatabe<-getallData()
+    new<-datatabe %>% filter(Class ==input$class, Portable ==input$portable, Contrast == input$contrast) %>% select(staff_id, Class, Scan_Time, Report_time, Portable, Contrast)
+  })
   
   #dataset
   output$table <-DT::renderDataTable({
