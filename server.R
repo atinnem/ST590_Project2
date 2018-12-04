@@ -282,12 +282,13 @@ predictLM<-reactive({
 })
 
 predictTree<-reactive({
-  if(input$type=="Scan_Time"){
+  withProgress(message = "Please wait, this may take a minute", value = .1, {if(input$type=="Scan_Time"){
   #fitTree<-tree(Scan_Time~ Class + Contrast + Portable + staff_id, data = df.csv)
     boostFit<-gbm(Scan_Time~Class + Contrast + Portable + staff_id, data = df.csv, distribution = "gaussian", n.trees = input$n_trees, shrinkage = 0.1, interaction.depth = 4)} else{
     #fitTree<-tree(Report_time~ Class + Contrast + Portable + staff_id, data = df.csv
       boostFit<-gbm(Report_time~Class + Contrast + Portable + staff_id, data = df.csv, distribution = "gaussian", n.trees = input$n_trees, shrinkage = 0.1, interaction.depth = 4)}
   predict(boostFit,data.frame(Class = c(input$class), Contrast = c(input$contrast), Portable = c(input$portable), staff_id = c(input$Staff)), n.trees = input$n_trees)
+  })
   })
 
 #Text to display predictions from lm analysis
